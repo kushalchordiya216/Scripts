@@ -15,6 +15,10 @@ for i in "$@"; do
         NVIDIA="${i#*=}"
         shift
         ;;
+    -u=* | --utils=*)
+        UTILS="${i#*=}"
+        shift
+        ;;
     -h)
         HELP=true
         shift
@@ -31,10 +35,11 @@ if $HELP; then
     echo -e "-c | --conda\nif set to true install miniconda3 in the home directory\n"
     echo -e "-d | --docker\nif set to true installs docker container runtime along with docker-compose\n"
     echo -e "-n | --nvidia\nif set to true installs recommended nvidia-drivers for the system, along with nvidia-cuda tools and nvidia-docker setup"
+    echo -e "-u | --utils\nif set to true, install a few command line utilities to make life easier ( will also install linux brew and some fonts as they are required dependencies)"
     exit 0
 else
-    sudo apt install build-essential net-tools # install gcc, make, etc
-
+    cp ./.bashrc ~/.bashrc
+    sudo apt install build-essential net-tools sqlite3 # install gcc, make, etc
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >packages.microsoft.gpg
     sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
     sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
@@ -44,10 +49,19 @@ else
     sudo apt install code # install vscode
 
     sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 0
+    sudo apt install python3-pip
     pip install -U pip # create alias for python3->python
+
+    if $UTILS; then
+        echo "Installing CLI Utils ... "
+        bash cli_util_setup.sh
+        echo "Finished installing CLI Utils"
+    fi
+
     if $CONDA; then
         echo "Installing miniconda3 ... "
         bash conda_setup.sh
+        conda config --set auto_activate_base false
         echo "Miniconda3 install completed!"
     fi
 
