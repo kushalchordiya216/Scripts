@@ -45,35 +45,34 @@ esac
 # should be on the output of commands, not on the prompt
 #force_color_prompt=yes
 
-reset="\[\033[0m\]"      # no colors (reset)
-black="\[\033[0;30m\]"   # black
-red="\[\033[0;31m\]"     # red
-green="\[\033[0;32m\]"   # green
-yellow="\[\033[0;33m\]"  # yellow
-blue="\[\033[0;34m\]"    # blue
-magenta="\[\033[0;35m\]" # magenta
-cyan="\[\033[0;36m\]"    # cyan
-white="\[\033[0;37m\]"   # white
+reset="\033[0m"
+black="\033[0;30m"
+red="\033[0;31m"
+green="\033[0;32m"
+yellow="\033[0;33m"
+blue="\033[0;34m"
+magenta="\033[0;35m"
+cyan="\033[0;36m"
+white="\033[0;37m"
 
 # emphasized (bolded) colors
-bold_black="\[\033[1;30m\]"   # black
-bold_red="\[\033[1;31m\]"     # red
-bold_green="\[\033[1;32m\]"   # green
-bold_yellow="\[\033[1;33m\]"  # yellow
-bold_blue="\[\033[1;34m\]"    # blue
-bold_magenta="\[\033[1;35m\]" # magenta
-bold_cyan="\[\033[1;36m\]"    # cyan
-bold_white="\[\033[1;37m\]"   # white
+bold_black="\033[1;30m"
+bold_red="\033[1;31m"
+bold_green="\033[1;32m"
+bold_yellow="\033[1;33m"
+bold_blue="\033[1;34m"
+bold_magenta="\033[1;35m"
+bold_cyan="\033[1;36m"
+bold_white="\033[1;37m"
 
-# background colors
-background_black="\[\033[40m\]"   # black
-background_red="\[\033[41m\]"     # red
-background_green="\[\033[42m\]"   # green
-background_yellow="\[\033[43m\]"  # yellow
-background_blue="\[\033[44m\]"    # blue
-background_magenta="\[\033[45m\]" # magenta
-background_cyan="\[\033[46m\]"    # cyan
-background_white="\[\033[47m\]"   # white
+background_black="\033[40m"
+background_red="\033[41m"
+background_green="\033[42m"
+background_yellow="\033[43m"
+background_blue="\033[44m"
+background_magenta="\033[45m"
+background_cyan="\033[46m"
+background_white="\033[47m"
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -87,15 +86,35 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\[\e[01;32m\u@\h\[\e[00m\]:\[\e[01;34m\]\W\[\e[00m\]\$ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\W\$ '
 fi
 unset color_prompt force_color_prompt
 
-OS_ICON= # Replace this with your OS icon
-PS1="\n $white╭─────$blue$white$background_blue $OS_ICON \u $reset$blue$white─────$green$black$background_green \w $reset$green \n $white╰ \[\033[1;36m\]\$ \[\033[0m\]"
+OS_ICON= # Replace this with your OS icon
+base_prompt=" $white╭─────$blue$white$background_blue $OS_ICON \u $reset$blue$white─────$green$black$background_green \W $reset$green$reset"
+new_line=" \n $white╰$cyan\$ $reset"
+PS1="$base_prompt$new_line"
 
+function prompt_right() {
+    if [ ! -z $CONDA_DEFAULT_ENV ]; then
+        echo -e "$bold_cyan$(echo \( ${CONDA_DEFAULT_ENV}\))\033[0m"
+    else
+        echo -e "$bold_cyan$(echo ${CONDA_DEFAULT_ENV})\033[0m"
+    fi
+}
+
+function prompt_left() {
+    echo -e "$base_prompt"
+}
+
+function prompt() {
+    compensate=11
+    # PS1=$(printf "%*s\r%s%s " "$(($(tput cols) + ${compensate}))" "$(prompt_right)" "$(prompt_left)" "$new_line")
+    PS1=$(printf "%s %s%s " "$(prompt_left)" "$(prompt_right)" "$new_line")
+}
+PROMPT_COMMAND=prompt
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm* | rxvt*)
@@ -121,6 +140,13 @@ fi
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
+# some more ls aliases
+alias ls='lsd'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias lst='lsd --tree'
+
 # Man page aliases
 export LESS_TERMCAP_mb=$'\e[1;32m'
 export LESS_TERMCAP_md=$'\e[1;32m'
@@ -133,6 +159,7 @@ export LESS_TERMCAP_us=$'\e[1;4;31m'
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias cat='batcat'
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -152,3 +179,21 @@ if ! shopt -oq posix; then
         . /etc/bash_completion
     fi
 fi
+
+. "$HOME/.cargo/env"
+eval "$(mcfly init bash)"
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/kushal/Workspace/miniconda3/bin/conda' 'shell.bash' 'hook' 2>/dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/kushal/Workspace/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/kushal/Workspace/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/kushal/Workspace/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
