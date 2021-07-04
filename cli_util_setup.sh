@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt install -y bat htop fd-find ranger
+sudo apt install -y bat htop fd-find ranger curl
 echo "alias cat='batcat'" >>.bashrc
 
 # ranger config
@@ -26,7 +26,7 @@ curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest |
     cut -d : -f 2,3 |
     tr -d \" |
     wget -qi -
-unzip Hack.zip
+unzip FiraCode.zip
 sudo cp *.otf /usr/share/fonts/
 fc-cache -fv
 
@@ -45,3 +45,6 @@ echo 'eval "$(mcfly init bash)"' >>.bashrc
 
 # duf installation
 brew install duf
+
+# fd-find installation
+sudo apt instal fd-find

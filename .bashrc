@@ -197,3 +197,31 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+alias cat='batcat'
+alias ls='lsd'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias lst='lsd --tree'
+eval "$(mcfly init bash)"
+alias cat='batcat'
+alias ls='lsd'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias lst='lsd --tree'
+eval "$(mcfly init bash)"
+alias cat='batcat'
+alias ls='lsd'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias lst='lsd --tree'
+eval "$(mcfly init bash)"
+alias cat='batcat'
+alias ls='lsd'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias lst='lsd --tree'
+eval "$(mcfly init bash)"
