@@ -48,3 +48,6 @@ brew install duf
 
 # fd-find installation
 sudo apt instal fd-find
+
+# starship prompt installation
+sh -c "$(curl -fsSL https://starship.rs/install.sh)"

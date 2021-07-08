@@ -1,0 +1,30 @@
+[username]
+show_always = true
+style_user = "blue"
+style_root = "red bold"
+format = "╭─────[](fg:blue)[ $user ](fg:white bg:blue)[](fg:blue bg:green)"
+
+[cmd_duration]
+disabled = true
+
+[directory]
+truncation_length = 1
+truncation_symbol = ""
+format = "[ $path ](fg:black bg:green)[$read_only](bg:green)[ ](fg:green)"
+
+[character]
+success_symbol = "[╰](bold white) "
+error_symbol = "[╰](bold white) "
+
+[conda]
+ignore_base = false
+format = "[$symbol$environment ](bright-yellow) "
+
+[golang]
+disabled = true
+
+[python]
+disabled = true
+
+[docker_context]
+format = "via [🐋 $context](blue bold)"
